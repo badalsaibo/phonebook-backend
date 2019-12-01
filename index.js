@@ -19,7 +19,7 @@ let persons = [
     id: 3,
   },
   {
-    name: "Stephen Zedd",
+    name: "Zelad Tedd",
     number: "5575-757575",
     id: 4,
   }
@@ -50,6 +50,13 @@ app.get('/api/persons/:id', (req, res) => {
   } else {
     res.status(404).end();
   }
+})
+
+/* -- DELETE -- */
+app.delete('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id);
+  persons = persons.filter( (person) => person.id !== id );
+  res.status(204).end();
 })
 
 
