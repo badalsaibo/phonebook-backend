@@ -61,7 +61,7 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 /* -- POST -- */
-app.use(bodyParser.json());
+app.use(bodyParser.json()); // else req.body will be undefined
 
 const generateId = (max) => {
   return Math.floor(Math.random() * max);
@@ -69,6 +69,18 @@ const generateId = (max) => {
 
 app.post('/api/persons', (req, res) => {
   const person = req.body;
+  if (!(person.number) ||  (!person.name)) {
+    return res.status(400).json({
+      error: 'name or number is missing'
+    })
+  }
+
+  if (persons.map( (person) => person.name).find( (name) => name === person.name)) {
+    return res.status(400).json({
+      error: 'name already exists'
+    })
+  }
+
   person.id = generateId(1000);
   persons = persons.concat(person);
   res.json(person);
@@ -76,4 +88,4 @@ app.post('/api/persons', (req, res) => {
 
 /* -- SERVER -- */
 const PORT = 3001;
-app.listen(PORT, console.log(`Running server on port ${PORT}`))
+app.listen(PORT, console.log(`Running server on port ${PORT}`));
