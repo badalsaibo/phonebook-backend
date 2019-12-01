@@ -27,12 +27,20 @@ let persons = [
 
 /* -- GET -- */
 app.get('/', (req, res) => {
-  res.end('<a href="/api/persons">/api/persons</a>')
+  res.send('<a href="/api/persons">/api/persons</a>');
 });
 
 app.get('/api/persons', (req, res) => {
   res.json(persons);
 });
+
+app.get('/info', (req, res) => {
+  res.send(`
+    Phonebook has info for ${persons.length} people
+    <br>
+    ${new Date()}
+  `)
+})
 
 
 
