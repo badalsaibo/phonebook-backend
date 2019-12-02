@@ -7,6 +7,9 @@ const cors = require('cors');
 /* -- Enabling CORS -- */
 app.use(cors());
 
+/* -- Enabling Express to serve static content -- */
+app.use(express.static('build'));
+
 /* -- MORGAN -- */
 morgan.token('body', (req, res) => {
   return JSON.stringify(req.body);
