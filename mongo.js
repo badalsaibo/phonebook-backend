@@ -22,7 +22,7 @@ mongoose
   .catch( (error) => console.log(error.name))
 
 // DEFINING A SCHEMA
-const personSchema = mongoose.Schema({
+const personSchema = new mongoose.Schema({
   name: String,
   number: String,
 });
