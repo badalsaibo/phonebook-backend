@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const app = express(); 
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
+const Person = require('./models/person');
 
 /* -- Enabling CORS -- */
 app.use(cors());
@@ -44,28 +46,36 @@ let persons = [
 /* -- GET -- */
 app.get('/', (req, res) => {
   res.send('<a href="/api/persons">/api/persons</a>');
-});
+}); // This is not being used now because '/' is used to hold static content;
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons);
+  Person.find({})
+    .then( (persons) => {
+      res.json(persons.map( (person) => person.toJSON()));
+    });
 });
 
 app.get('/info', (req, res) => {
-  res.send(`
-    Phonebook has info for ${persons.length} people
-    <br>
-    ${new Date()}
-  `)
-})
+  Person.find({})
+    .then( (persons) => {
+      res.send(`
+      Phonebook has info for ${persons.length} people
+      <br>
+      ${new Date()}
+      `);
+    });
+});
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id); // else type if 'string'
-  const person = persons.find( (person) => person.id === id );
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
-  }
+  const id = req.params.id; 
+
+  Person.findById(id)
+    .then( (person) => {
+      res.json(person.toJSON());
+    })
+    .catch( (error) => {
+      res.status(404).end();
+    })
 })
 
 /* -- DELETE -- */
@@ -83,8 +93,8 @@ const generateId = (max) => {
 }
 
 app.post('/api/persons', (req, res) => {
-  const person = req.body;
-  if (!(person.number) ||  (!person.name)) {
+  const body = req.body; // The object receive from frontend
+  if (!(body.number) ||  (!body.name)) {
     return res.status(400).json({
       error: 'name or number is missing'
     })
@@ -102,5 +112,5 @@ app.post('/api/persons', (req, res) => {
 });
 
 /* -- SERVER -- */
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, console.log(`Running server on port ${PORT}`));
