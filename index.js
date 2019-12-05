@@ -88,27 +88,23 @@ app.delete('/api/persons/:id', (req, res) => {
 /* -- POST -- */
 app.use(bodyParser.json()); // else req.body will be undefined
 
-const generateId = (max) => {
-  return Math.floor(Math.random() * max);
-}
-
 app.post('/api/persons', (req, res) => {
-  const body = req.body; // The object receive from frontend
+  const body = req.body; // The object received from frontend
   if (!(body.number) ||  (!body.name)) {
     return res.status(400).json({
       error: 'name or number is missing'
     })
   }
 
-  if (persons.map( (person) => person.name).find( (name) => name === person.name)) {
-    return res.status(400).json({
-      error: 'name already exists'
-    })
-  }
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
 
-  person.id = generateId(1000);
-  persons = persons.concat(person);
-  res.json(person);
+  person.save()
+    .then( (savedPerson) => {
+      res.json(savedPerson);
+    })
 });
 
 /* -- SERVER -- */
