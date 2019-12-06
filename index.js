@@ -23,29 +23,6 @@ morgan.token('body', (req, res) => {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
-/* -- PERSONS -- */
-let persons = [
-  {
-    name: "Stephen Zend",
-    number: "469464-66",
-    id: 1,
-  },
-  {
-    name: "Riley Brooks",
-    number: "34434-43",
-    id: 2,
-  },
-  {
-    name: "Justin Guill",
-    number: "7878870-7878",
-    id: 3,
-  },
-  {
-    name: "Zelad Tedd",
-    number: "5575-757575",
-    id: 4,
-  }
-]
 
 /* -- GET -- */
 app.get('/', (req, res) => {
@@ -83,14 +60,13 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 /* -- DELETE -- */
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
     .then( (result) => {
       res.status(204).end();
     })
     .catch( (error) => {
-      console.log(error.message);
-      res.status(404).send({ error: 'malformatted id'})
+      next(error); // Use our custom error-handler function
     })
 });
 
@@ -115,6 +91,20 @@ app.post('/api/persons', (req, res) => {
     })
 });
 
+/* -- ERROR-HANDLER -- */
+
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message);
+  if(error.name === 'CastError' && error.kind === 'ObjectId') {
+    return res.status(404).send({ error: 'malformatted id'});
+  } else {
+    next(error);    // else use the express default error-handler
+  }
+};
+
+app.use(errorHandler);
+
 /* -- SERVER -- */
+
 const PORT = process.env.PORT;
 app.listen(PORT, console.log(`Running server on port ${PORT}`));
