@@ -36,7 +36,7 @@ app.get('/api/persons', (req, res) => {
     });
 });
 
-app.get('/info', (req, res) => {
+app.get('/api/persons/info', (req, res) => {
   Person.find({})
     .then( (persons) => {
       res.send(`
