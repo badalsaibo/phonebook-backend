@@ -6,6 +6,10 @@ const morgan = require('morgan');
 const cors = require('cors');
 const Person = require('./models/person');
 
+/* -- BODY-PARSER -- */
+app.use(bodyParser.json()); // else req.body will be undefined
+
+
 /* -- Enabling CORS -- */
 app.use(cors());
 
@@ -80,13 +84,17 @@ app.get('/api/persons/:id', (req, res) => {
 
 /* -- DELETE -- */
 app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter( (person) => person.id !== id );
-  res.status(204).end();
-})
+  Person.findByIdAndDelete(req.params.id)
+    .then( (result) => {
+      res.status(204).end();
+    })
+    .catch( (error) => {
+      console.log(error.message);
+      res.status(404).send({ error: 'malformatted id'})
+    })
+});
 
 /* -- POST -- */
-app.use(bodyParser.json()); // else req.body will be undefined
 
 app.post('/api/persons', (req, res) => {
   const body = req.body; // The object received from frontend
