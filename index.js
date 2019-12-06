@@ -60,6 +60,7 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 /* -- DELETE -- */
+
 app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
     .then( (result) => {
@@ -78,7 +79,7 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({
       error: 'name or number is missing'
     })
-  }
+  };
 
   const person = new Person({
     name: body.name,
@@ -88,6 +89,28 @@ app.post('/api/persons', (req, res) => {
   person.save()
     .then( (savedPerson) => {
       res.json(savedPerson);
+    })
+});
+
+/* -- PUT -- */
+
+app.put('/api/persons/:id', (req, res, next) => {
+  const body = req.body;
+
+  const person = {
+    number: body.number
+  }
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then( (updatedPerson) => {
+      if (updatedPerson) {
+        res.json(updatedPerson.toJSON());
+      } else {
+        res.send({ error: 'mismatched id'}).end();
+      }
+    })
+    .catch( (error) => {
+      next(error);
     })
 });
 

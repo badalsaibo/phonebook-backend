@@ -1,6 +1,8 @@
 // All we need is to export the mongoose model
 const mongoose = require('mongoose');
 
+mongoose.set('useFindAndModify', false);
+
 const url = process.env.MONGODB_URI;
 
 /* -- Connect -- */
