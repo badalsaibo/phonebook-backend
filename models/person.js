@@ -23,8 +23,13 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
       type: String,
       required: true,
       unique: true,
+      minlength: 3
     },
-    number: String,
+    number: {
+      type: String,
+      required: true,
+      minlength: 8,
+    },
   });
 
   personSchema.plugin(uniqueValidator/* , { type: 'mongoose-unique-validator'} */);
