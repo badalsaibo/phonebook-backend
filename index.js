@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const app = express(); 
+const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -48,7 +48,7 @@ app.get('/api/persons/info', (req, res) => {
 });
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = req.params.id; 
+  const id = req.params.id;
 
   Person.findById(id)
     .then( (person) => {
@@ -56,8 +56,8 @@ app.get('/api/persons/:id', (req, res) => {
     })
     .catch( (error) => {
       res.status(404).end();
-    })
-})
+    });
+});
 
 /* -- DELETE -- */
 
@@ -78,8 +78,8 @@ app.post('/api/persons', (req, res, next) => {
   if (!(body.number) ||  (!body.name)) {
     return res.status(400).json({
       error: 'name or number is missing'
-    })
-  };
+    });
+  }
 
   const person = new Person({
     name: body.name,
@@ -92,7 +92,7 @@ app.post('/api/persons', (req, res, next) => {
     })
     .catch( (error) => {
       next(error);
-    })
+    });
 });
 
 /* -- PUT -- */
@@ -102,7 +102,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 
   const person = {
     number: body.number
-  }
+  };
 
   Person.findByIdAndUpdate(req.params.id, person, { new: true })
     .then( (updatedPerson) => {
@@ -114,19 +114,18 @@ app.put('/api/persons/:id', (req, res, next) => {
     })
     .catch( (error) => {
       next(error);
-    })
+    });
 });
 
 /* -- ERROR-HANDLER -- */
 
 const errorHandler = (error, req, res, next) => {
   if(error.name === 'CastError' && error.kind === 'ObjectId') {
-    return res.status(404).send({ error: 'malformatted id'});
+    return res.status(404).send({ error: 'malformatted id' });
   } else if (error.name === 'ValidationError') {
-    console.log(error.message)
-    return res.status(400).send({ error: error.message})
-  } 
-  
+    console.log(error.message);
+    return res.status(400).send({ error: error.message });
+  }
   else {
     next(error);    // else use the express default error-handler
   }

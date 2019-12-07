@@ -40,14 +40,14 @@ if (process.argv.length === 3) {
       });
       mongoose.connection.close();
       process.exit(); // else the code still runs after this block.
-    })
+    });
 }
 
 // CREATING A DOCUMENT
 const person = new Person({
   name: contactName,
   number: contactNumber
-})
+});
 
 // SAVING DOCUMENT TO DATABASE
 person.save()
@@ -55,4 +55,4 @@ person.save()
     console.log(`Added ${response.name} number ${response.number} to phonebook`)
     // CLOSING CONNECTION
     mongoose.connection.close();
-  })
+  });
